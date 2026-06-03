@@ -92,24 +92,27 @@ class Board
     }
     void reset();
 };
-class Game
-{
-    private:
+class Game {
+private:
     Board board;
-    char currentPlayer;
+    Player p1;
+    Player p2;
+    Player* currentPlayer;
 
-    public:
-    Game()
+public:
+    Game() : p1("Player 1", 'X'), p2("Player 2", 'O')
     {
-        currentPlayer = 'X';
+        currentPlayer = &p1;
     }
+
     void switchTurn()
     {
-        if(currentPlayer == 'X')
-            currentPlayer = 'O';
+        if(currentPlayer == &p1)
+            currentPlayer = &p2;
         else
-            currentPlayer = 'X';
+            currentPlayer = &p1;
     }
+
     void play()
     {
         int move;
@@ -118,22 +121,23 @@ class Game
         {
             board.display();
 
-            cout << "Player " << currentPlayer << ", enter move (1-9): ";
+            cout << currentPlayer->name
+                 << " (" << currentPlayer->symbol << ") enter move (1-9): ";
+
             cin >> move;
 
             if(move < 1 || move > 9)
             {
-                cout << "Invalid move! Try again.\n";
+                cout << "Invalid move!\n";
                 continue;
             }
 
-            if(board.makeMove(move, currentPlayer))
+            if(board.makeMove(move, currentPlayer->symbol))
             {
-                
-                if(board.checkWin(currentPlayer))
+                if(board.checkWin(currentPlayer->symbol))
                 {
                     board.display();
-                    cout << "Player " << currentPlayer << " WINS!\n";
+                    cout << currentPlayer->name << " WINS!\n";
                     break;
                 }
 
@@ -148,7 +152,7 @@ class Game
             }
             else
             {
-                cout << "Cell already occupied! Try again.\n";
+                cout << "Cell already occupied!\n";
             }
         }
     }

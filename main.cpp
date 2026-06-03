@@ -42,7 +42,19 @@ class Board
         }
         cout << "\n";
     }
-    bool makeMove(int row, int col, char symbol);
+    bool makeMove(int move, char symbol)
+    {
+        int row = (move - 1) / 3;
+        int col = (move - 1) % 3;
+
+        if(grid[row][col] != 'X' && grid[row][col] != 'O')
+        {
+            grid[row][col] = symbol;
+            return true;
+        }
+
+        return false;
+    }
     bool isFull();
     bool checkWin(char symbol);
     void reset();

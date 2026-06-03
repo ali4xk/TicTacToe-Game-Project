@@ -17,7 +17,18 @@ class Board
     char grid[3][3];
 
     public:
-    Board();
+    Board()
+    {
+        int num = 1;
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                grid[i][j] = num;
+                num++;
+            }
+        }
+    }
     void display();
     bool makeMove(int row, int col, char symbol);
     bool isFull();

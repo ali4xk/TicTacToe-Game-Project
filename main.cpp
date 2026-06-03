@@ -129,6 +129,21 @@ class Game
 
             if(board.makeMove(move, currentPlayer))
             {
+                
+                if(board.checkWin(currentPlayer))
+                {
+                    board.display();
+                    cout << "Player " << currentPlayer << " WINS!\n";
+                    break;
+                }
+
+                if(board.isFull())
+                {
+                    board.display();
+                    cout << "Game Draw!\n";
+                    break;
+                }
+
                 switchTurn();
             }
             else

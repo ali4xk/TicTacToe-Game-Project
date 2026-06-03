@@ -83,5 +83,31 @@ class Game
         else
             currentPlayer = 'X';
     }
-    void play();
+    void play()
+    {
+        int move;
+
+        while(true)
+        {
+            board.display();
+
+            cout << "Player " << currentPlayer << ", enter move (1-9): ";
+            cin >> move;
+
+            if(move < 1 || move > 9)
+            {
+                cout << "Invalid move! Try again.\n";
+                continue;
+            }
+
+            if(board.makeMove(move, currentPlayer))
+            {
+                switchTurn();
+            }
+            else
+            {
+                cout << "Cell already occupied! Try again.\n";
+            }
+        }
+    }
 };

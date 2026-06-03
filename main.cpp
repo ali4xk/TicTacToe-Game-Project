@@ -31,16 +31,19 @@ class Board
     }
     void display()
     {
-        cout << "\n";
+         cout << "\n+---+---+---+\n";
+
         for(int i = 0; i < 3; i++)
         {
+            cout << "| ";
+
             for(int j = 0; j < 3; j++)
             {
-                cout << grid[i][j] << " ";
+                cout << grid[i][j] << " | ";
             }
-            cout << endl;
+
+            cout << "\n+---+---+---+\n";
         }
-        cout << "\n";
     }
     bool makeMove(int move, char symbol)
     {
@@ -55,7 +58,10 @@ class Board
 
         return false;
     }
-    bool isFull();
+    bool isFull()
+    {
+
+    }
     bool checkWin(char symbol);
     void reset();
 };

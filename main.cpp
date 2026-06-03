@@ -69,11 +69,19 @@ class Game
 {
     private:
     Board board;
-    Player p1, p2;
-    Player* currentPlayer;
+    char currentPlayer;
 
     public:
-    Game();
-    void switchTurn();
+    Game()
+    {
+        currentPlayer = 'X';
+    }
+    void switchTurn()
+    {
+        if(currentPlayer == 'X')
+            currentPlayer = 'O';
+        else
+            currentPlayer = 'X';
+    }
     void play();
 };

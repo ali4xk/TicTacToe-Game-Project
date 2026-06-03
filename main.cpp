@@ -60,7 +60,15 @@ class Board
     }
     bool isFull()
     {
-
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                if(grid[i][j] != 'X' && grid[i][j] != 'O')
+                return false;
+            }
+        }
+        return true;
     }
     bool checkWin(char symbol)
     {

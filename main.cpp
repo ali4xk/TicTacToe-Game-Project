@@ -92,7 +92,8 @@ class Board
     }
     void reset();
 };
-class Game {
+class Game
+{
 private:
     Board board;
     Player p1;
@@ -100,7 +101,7 @@ private:
     Player* currentPlayer;
 
 public:
-    Game() : p1("Player 1", 'X'), p2("Player 2", 'O')
+    Game():p1("Player 1", 'X'), p2("Player 2", 'O')
     {
         currentPlayer = &p1;
     }

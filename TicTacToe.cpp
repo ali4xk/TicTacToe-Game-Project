@@ -10,33 +10,30 @@ class Game
 private:
     sf::RenderWindow window;
     sf::Font font;
+
     char board[3][3];
     bool isXTurn = true;
+
+    bool gameOver = false;
+    char winner = ' ';
 
 public:
     Game();
     void run();
     void handleEvents();
     void render();
+    bool checkWin(char p);
 };
 
 Game::Game()
     : window(sf::VideoMode({WINDOW_SIZE, WINDOW_SIZE}), "Tic Tac Toe")
 {
-    // init board
     for (int i = 0; i < 3; i++)
-    {
         for (int j = 0; j < 3; j++)
-        {
             board[i][j] = ' ';
-        }
-    }
 
-    // load font
     if (!font.openFromFile("arial.ttf"))
-    {
         std::cout << "Font failed to load!" << std::endl;
-    }
 }
 
 void Game::run()
@@ -58,6 +55,9 @@ void Game::handleEvents()
         if (event->is<sf::Event::Closed>())
             window.close();
 
+        if (gameOver)
+            continue;
+
         if (event->is<sf::Event::MouseButtonPressed>())
         {
             auto mousePos = sf::Mouse::getPosition(window);
@@ -71,10 +71,43 @@ void Game::handleEvents()
                 {
                     board[row][col] = (isXTurn ? 'X' : 'O');
                     isXTurn = !isXTurn;
+
+                    if (checkWin('X'))
+                    {
+                        gameOver = true;
+                        winner = 'X';
+                    }
+                    else if (checkWin('O'))
+                    {
+                        gameOver = true;
+                        winner = 'O';
+                    }
                 }
             }
         }
     }
+}
+
+bool Game::checkWin(char p)
+{
+    // rows
+    for (int i = 0; i < 3; i++)
+        if (board[i][0] == p && board[i][1] == p && board[i][2] == p)
+            return true;
+
+    // columns
+    for (int i = 0; i < 3; i++)
+        if (board[0][i] == p && board[1][i] == p && board[2][i] == p)
+            return true;
+
+    // diagonals
+    if (board[0][0] == p && board[1][1] == p && board[2][2] == p)
+        return true;
+
+    if (board[0][2] == p && board[1][1] == p && board[2][0] == p)
+        return true;
+
+    return false;
 }
 
 void Game::render()
@@ -99,7 +132,7 @@ void Game::render()
         window.draw(line);
     }
 
-    // TEXT (X and O)
+    // X & O
     sf::Text text(font, "", 80);
     text.setFillColor(sf::Color::Black);
 
@@ -113,12 +146,26 @@ void Game::render()
 
                 text.setPosition(sf::Vector2f(
                     j * CELL_SIZE + 70.f,
-                    i * CELL_SIZE + 40.f
-                ));
+                    i * CELL_SIZE + 40.f));
 
                 window.draw(text);
             }
         }
+    }
+
+    // WIN MESSAGE
+    if (gameOver)
+    {
+        sf::Text msg(font, "", 50);
+        msg.setFillColor(sf::Color::Red);
+
+        if (winner == 'X')
+            msg.setString("X Wins!");
+        else if (winner == 'O')
+            msg.setString("O Wins!");
+
+        msg.setPosition(sf::Vector2f(200.f, 250.f));
+        window.draw(msg);
     }
 }
 

@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
-
+const int WINDOW_SIZE = 600;
+const int GRID_SIZE = 3;
+const float CELL_SIZE = WINDOW_SIZE / GRID_SIZE;
 class Game
 {
 private:
@@ -32,7 +34,7 @@ void Game::run()
                 window.close();
         }
 
-        window.clear(sf::Color::White);
+        window.clear(sf::Color(245, 245, 245));
 
         render();
 
@@ -42,25 +44,25 @@ void Game::run()
 void Game::render()
 {
     sf::RectangleShape line;
-
-    // Vertical line 1
-    line.setSize({5.f, 600.f});
-    line.setPosition({200.f, 0.f});
     line.setFillColor(sf::Color::Black);
-    window.draw(line);
 
-    // Vertical line 2
-    line.setPosition({400.f, 0.f});
-    window.draw(line);
+    float thickness = 6.f;
 
-    // Horizontal line 1
-    line.setSize({600.f, 5.f});
-    line.setPosition({0.f, 200.f});
-    window.draw(line);
+    // vertical lines
+    for (int i = 1; i < GRID_SIZE; i++)
+    {
+        line.setSize({thickness, WINDOW_SIZE});
+        line.setPosition(i * CELL_SIZE, 0);
+        window.draw(line);
+    }
 
-    // Horizontal line 2
-    line.setPosition({0.f, 400.f});
-    window.draw(line);
+    // horizontal lines
+    for (int i = 1; i < GRID_SIZE; i++)
+    {
+        line.setSize({WINDOW_SIZE, thickness});
+        line.setPosition(0, i * CELL_SIZE);
+        window.draw(line);
+    }
 }
 
 int main()

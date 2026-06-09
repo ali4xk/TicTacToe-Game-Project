@@ -34,7 +34,13 @@ public:
         winner = ' ';
     }
 };
-
+enum GameState
+{
+    MENU,
+    PLAYING,
+    GAMEOVER
+};
+GameState state = MENU;
 Game::Game()
     : window(sf::VideoMode({WINDOW_SIZE, WINDOW_SIZE}), "Tic Tac Toe")
 {
@@ -62,11 +68,21 @@ void Game::handleEvents()
 {
     while (auto event = window.pollEvent())
     {
+        if (state == MENU)
+        {
+            if (event->is<sf::Event::MouseButtonPressed>())
+            {
+                state = PLAYING;
+            }
+            return;
+        }
         if (event->is<sf::Event::Closed>())
             window.close();
         if (event->is<sf::Event::KeyPressed>())
         {
-            if (event->key().code == sf::Keyboard::Key::R)
+            auto keyEvent = event->getIf<sf::Event::KeyPressed>();
+
+            if (keyEvent && keyEvent->code == sf::Keyboard::Key::R)
             {
                 resetGame();
             }
@@ -128,6 +144,20 @@ bool Game::checkWin(char p)
 
 void Game::render()
 {
+    if (state == MENU)
+    {
+        sf::Text title(font, "TIC TAC TOE", 60);
+        title.setFillColor(sf::Color(80, 220, 255));
+        title.setPosition(sf::Vector2f(120.f, 150.f));
+        window.draw(title);
+
+        sf::Text start(font, "Click Anywhere to Start", 30);
+        start.setFillColor(sf::Color(200, 200, 200));
+        start.setPosition(sf::Vector2f(150.f, 300.f));
+        window.draw(start);
+
+        return;
+    }
     auto mousePos = sf::Mouse::getPosition(window);
 
     int hoverCol = mousePos.x / CELL_SIZE;
@@ -195,9 +225,12 @@ void Game::render()
         }
     }
 
-    // WIN MESSAGE
     if (gameOver)
     {
+        sf::RectangleShape overlay;
+        overlay.setSize(sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE));
+        overlay.setFillColor(sf::Color(0, 0, 0, 180));
+        window.draw(overlay);
         sf::Text msg(font, "", 40);
         msg.setFillColor(sf::Color(0, 255, 100));
 
@@ -206,14 +239,13 @@ void Game::render()
         else if (winner == 'O')
             msg.setString("PLAYER O WINS!");
 
-        sf::Text restart(font, "Press R to Restart", 30);
+        msg.setPosition(sf::Vector2f(100.f, 250.f));
+        window.draw(msg);
+
         sf::Text restart(font, "Press R to Restart", 30);
         restart.setFillColor(sf::Color(200, 200, 200));
         restart.setPosition(sf::Vector2f(140.f, 320.f));
         window.draw(restart);
-        msg.setPosition(sf::Vector2f(100.f, 250.f));
-        window.draw(msg);
-
     }
 }
 

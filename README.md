@@ -30,13 +30,12 @@ C++
 SFML 3 (Graphics, Window, System)
 MinGW-w64 (GCC 14.2.0)
 
-📁 Project Structure:
+📁 Project Structure: (Main Files)
 TicTacToe Game Project/
-│
-├── TicTacToe.cpp
-├── arial.ttf (or custom font)
-├── orbitron.ttf (optional UI font)
-└── sfml libraries (linked via system path)
+ 1-TicTacToe.cpp
+  2-arial.ttf (or custom font)
+   3-orbitron.ttf (optional UI font)
+    4-sfml libraries (linked via system path)
 
 ▶️ How to Run:
 1. Compile

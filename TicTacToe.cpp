@@ -8,7 +8,7 @@ const float CELL_SIZE = WINDOW_SIZE / GRID_SIZE;
 class Game
 {
 private:
-
+    sf::Font titleFont;
     sf::RenderWindow window;
     sf::Font font;
     sf::Vector2f winStart;
@@ -54,15 +54,16 @@ enum GameState
     GAMEOVER
 };
 GameState state = MENU;
-Game::Game()
-    : window(sf::VideoMode({WINDOW_SIZE, WINDOW_SIZE}), "Tic Tac Toe")
+Game::Game() : window(sf::VideoMode({WINDOW_SIZE, WINDOW_SIZE}), "Tic Tac Toe")
 {
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
             board[i][j] = ' ';
-
+    if (!titleFont.openFromFile("orbitron.ttf"))
+        std::cout << "Title font failed to load!" << std::endl;
     if (!font.openFromFile("arial.ttf"))
         std::cout << "Font failed to load!" << std::endl;
+
 }
 
 void Game::run()
@@ -187,17 +188,49 @@ bool Game::checkWin(char p)
 
 void Game::render()
 {
-    if (state == MENU)
+   if (state == MENU)
     {
-        sf::Text title(font, "TIC TAC TOE", 60);
-        title.setFillColor(sf::Color(215, 215, 0));
-        title.setPosition(sf::Vector2f(120.f, 150.f));
-        window.draw(title);
+        // ===== TITLE =====
+        sf::Text title(titleFont, "TIC TAC TOE", 60);
+        title.setFillColor(sf::Color(255,215,0));
 
-        sf::Text start(font, "Click Anywhere to Start", 30);
-        start.setFillColor(sf::Color(0, 255, 100));
-        start.setPosition(sf::Vector2f(150.f, 300.f));
+        // center horizontally
+        sf::FloatRect bounds = title.getLocalBounds();
+
+        title.setOrigin(sf::Vector2f(
+            bounds.position.x + bounds.size.x / 2.f,
+            bounds.position.y + bounds.size.y / 2.f
+        ));
+
+        title.setPosition(sf::Vector2f(
+            WINDOW_SIZE / 2.f,
+            160.f
+        ));
+        // ===== START TEXT =====
+        sf::Text start(titleFont, "CLICK TO START", 30);
+        start.setFillColor(sf::Color(180,140,255));
+        start.setPosition(sf::Vector2f(130.f, 300.f));
+
+        window.draw(title);
         window.draw(start);
+
+        sf::Text signature(titleFont, "built by Muhammad Ali (@ali4xk)", 16);
+        signature.setFillColor(sf::Color(135, 206, 235));
+
+        // center horizontally
+        sf::FloatRect sBounds = signature.getLocalBounds();
+
+        signature.setOrigin(sf::Vector2f(
+            sBounds.position.x + sBounds.size.x / 2.f,
+            sBounds.position.y + sBounds.size.y / 2.f
+        ));
+
+        signature.setPosition(sf::Vector2f(
+            WINDOW_SIZE / 2.f,
+            WINDOW_SIZE - 20.f
+        ));
+
+        window.draw(signature);
 
         return;
     }
@@ -269,19 +302,25 @@ void Game::render()
     }
     if (gameOver && hasWinLine)
     {
-        sf::RectangleShape line;
-
         sf::Vector2f direction = winEnd - winStart;
         float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        line.setSize(sf::Vector2f(length, 8.f));
-        line.setPosition(winStart);
-
         float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159f;
+
+        // GLOW LAYER (big + transparent)
+        sf::RectangleShape glow;
+        glow.setSize(sf::Vector2f(length, 18.f));
+        glow.setPosition(winStart);
+        glow.setFillColor(sf::Color(255, 215, 0, 80)); // transparent gold
+        glow.setRotation(sf::degrees(angle));
+        window.draw(glow);
+
+        //  CORE LINE (sharp bright center)
+        sf::RectangleShape line;
+        line.setSize(sf::Vector2f(length, 6.f));
+        line.setPosition(winStart);
+        line.setFillColor(sf::Color(255, 215, 0)); // solid gold
         line.setRotation(sf::degrees(angle));
-
-        line.setFillColor(sf::Color(215, 215, 0));
-
         window.draw(line);
     }
     if (gameOver)

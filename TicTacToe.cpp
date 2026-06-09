@@ -42,7 +42,7 @@ void Game::run()
     {
         handleEvents();
 
-        window.clear(sf::Color(245, 245, 245));
+        window.clear(sf::Color(15, 15, 35));
         render();
         window.display();
     }
@@ -112,11 +112,33 @@ bool Game::checkWin(char p)
 
 void Game::render()
 {
+    auto mousePos = sf::Mouse::getPosition(window);
+
+    int hoverCol = mousePos.x / CELL_SIZE;
+    int hoverRow = mousePos.y / CELL_SIZE;
+    if (hoverRow >= 0 && hoverRow < 3 && hoverCol >= 0 && hoverCol < 3 && !gameOver)
+    {
+        sf::RectangleShape hoverBox;
+
+        hoverBox.setSize(
+            sf::Vector2f(CELL_SIZE - 4.f,
+                        CELL_SIZE - 4.f));
+
+        hoverBox.setPosition(
+            sf::Vector2f(
+                hoverCol * CELL_SIZE + 2.f,
+                hoverRow * CELL_SIZE + 2.f));
+
+        hoverBox.setFillColor(
+            sf::Color(0, 255, 255, 40));
+
+        window.draw(hoverBox);
+    }
     // GRID
     sf::RectangleShape line;
-    line.setFillColor(sf::Color::Black);
+    line.setFillColor(sf::Color(0, 255, 255));
 
-    float thickness = 6.f;
+    float thickness = 8.f;
 
     for (int i = 1; i < GRID_SIZE; i++)
     {
@@ -133,8 +155,7 @@ void Game::render()
     }
 
     // X & O
-    sf::Text text(font, "", 80);
-    text.setFillColor(sf::Color::Black);
+    sf::Text text(font, "", 100);
 
     for (int i = 0; i < 3; i++)
     {
@@ -144,9 +165,14 @@ void Game::render()
             {
                 text.setString(board[i][j]);
 
+                if (board[i][j] == 'X')
+                    text.setFillColor(sf::Color(255, 80, 80));
+                else
+                    text.setFillColor(sf::Color(255, 220, 0));
+
                 text.setPosition(sf::Vector2f(
-                    j * CELL_SIZE + 70.f,
-                    i * CELL_SIZE + 40.f));
+                    j * CELL_SIZE + CELL_SIZE / 3.f,
+                    i * CELL_SIZE + CELL_SIZE / 5.f));
 
                 window.draw(text);
             }
@@ -156,15 +182,15 @@ void Game::render()
     // WIN MESSAGE
     if (gameOver)
     {
-        sf::Text msg(font, "", 50);
-        msg.setFillColor(sf::Color::Red);
+        sf::Text msg(font, "", 40);
+        msg.setFillColor(sf::Color(0, 255, 100));
 
         if (winner == 'X')
-            msg.setString("X Wins!");
+            msg.setString("PLAYER X WINS!");
         else if (winner == 'O')
-            msg.setString("O Wins!");
+            msg.setString("PLAYER O WINS!");
 
-        msg.setPosition(sf::Vector2f(200.f, 250.f));
+        msg.setPosition(sf::Vector2f(100.f, 250.f));
         window.draw(msg);
     }
 }

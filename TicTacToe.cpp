@@ -8,9 +8,12 @@ const float CELL_SIZE = WINDOW_SIZE / GRID_SIZE;
 class Game
 {
 private:
+
     sf::RenderWindow window;
     sf::Font font;
-
+    sf::Vector2f winStart;
+    sf::Vector2f winEnd;
+    bool hasWinLine = false;
     char board[3][3];
     bool isXTurn = true;
 
@@ -32,6 +35,7 @@ public:
         isXTurn = true;
         gameOver = false;
         winner = ' ';
+        hasWinLine = false;
     }
     bool checkDraw()
     {
@@ -138,20 +142,45 @@ bool Game::checkWin(char p)
 {
     // rows
     for (int i = 0; i < 3; i++)
+    {
         if (board[i][0] == p && board[i][1] == p && board[i][2] == p)
+        {
+            winStart = sf::Vector2f(0.f, i * CELL_SIZE + CELL_SIZE / 2);
+            winEnd   = sf::Vector2f(WINDOW_SIZE, i * CELL_SIZE + CELL_SIZE / 2);
+            hasWinLine = true;
             return true;
+        }
+    }
 
     // columns
     for (int i = 0; i < 3; i++)
+    {
         if (board[0][i] == p && board[1][i] == p && board[2][i] == p)
+        {
+            winStart = sf::Vector2f(i * CELL_SIZE + CELL_SIZE / 2, 0.f);
+            winEnd   = sf::Vector2f(i * CELL_SIZE + CELL_SIZE / 2, WINDOW_SIZE);
+            hasWinLine = true;
             return true;
+        }
+    }
 
-    // diagonals
+    // diagonal top-left -> bottom-right
     if (board[0][0] == p && board[1][1] == p && board[2][2] == p)
+    {
+        winStart = sf::Vector2f(0.f, 0.f);
+        winEnd   = sf::Vector2f(WINDOW_SIZE, WINDOW_SIZE);
+        hasWinLine = true;
         return true;
+    }
 
+    // diagonal top-right -> bottom-left
     if (board[0][2] == p && board[1][1] == p && board[2][0] == p)
+    {
+        winStart = sf::Vector2f(WINDOW_SIZE, 0.f);
+        winEnd   = sf::Vector2f(0.f, WINDOW_SIZE);
+        hasWinLine = true;
         return true;
+    }
 
     return false;
 }
@@ -161,7 +190,7 @@ void Game::render()
     if (state == MENU)
     {
         sf::Text title(font, "TIC TAC TOE", 60);
-        title.setFillColor(sf::Color(255, 200, 0));
+        title.setFillColor(sf::Color(215, 215, 0));
         title.setPosition(sf::Vector2f(120.f, 150.f));
         window.draw(title);
 
@@ -238,7 +267,23 @@ void Game::render()
             }
         }
     }
+    if (gameOver && hasWinLine)
+    {
+        sf::RectangleShape line;
 
+        sf::Vector2f direction = winEnd - winStart;
+        float length = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        line.setSize(sf::Vector2f(length, 8.f));
+        line.setPosition(winStart);
+
+        float angle = std::atan2(direction.y, direction.x) * 180.f / 3.14159f;
+        line.setRotation(sf::degrees(angle));
+
+        line.setFillColor(sf::Color(215, 215, 0));
+
+        window.draw(line);
+    }
     if (gameOver)
     {
         sf::RectangleShape overlay;
@@ -267,7 +312,6 @@ void Game::render()
         window.draw(restart);
     }
 }
-
 int main()
 {
     Game game;

@@ -23,6 +23,16 @@ public:
     void handleEvents();
     void render();
     bool checkWin(char p);
+    void resetGame()
+    {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                board[i][j] = ' ';
+
+        isXTurn = true;
+        gameOver = false;
+        winner = ' ';
+    }
 };
 
 Game::Game()
@@ -54,7 +64,13 @@ void Game::handleEvents()
     {
         if (event->is<sf::Event::Closed>())
             window.close();
-
+        if (event->is<sf::Event::KeyPressed>())
+        {
+            if (event->key().code == sf::Keyboard::Key::R)
+            {
+                resetGame();
+            }
+        }
         if (gameOver)
             continue;
 
@@ -190,8 +206,14 @@ void Game::render()
         else if (winner == 'O')
             msg.setString("PLAYER O WINS!");
 
+        sf::Text restart(font, "Press R to Restart", 30);
+        sf::Text restart(font, "Press R to Restart", 30);
+        restart.setFillColor(sf::Color(200, 200, 200));
+        restart.setPosition(sf::Vector2f(140.f, 320.f));
+        window.draw(restart);
         msg.setPosition(sf::Vector2f(100.f, 250.f));
         window.draw(msg);
+
     }
 }
 

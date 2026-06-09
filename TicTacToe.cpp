@@ -33,6 +33,15 @@ public:
         gameOver = false;
         winner = ' ';
     }
+    bool checkDraw()
+    {
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                if (board[i][j] == ' ')
+                    return false;
+
+        return true;
+    }
 };
 enum GameState
 {
@@ -114,6 +123,11 @@ void Game::handleEvents()
                         gameOver = true;
                         winner = 'O';
                     }
+                    else if (checkDraw())
+                    {
+                        gameOver = true;
+                        winner = 'D'; // D = Draw
+                    }
                 }
             }
         }
@@ -147,12 +161,12 @@ void Game::render()
     if (state == MENU)
     {
         sf::Text title(font, "TIC TAC TOE", 60);
-        title.setFillColor(sf::Color(80, 220, 255));
+        title.setFillColor(sf::Color(255, 200, 0));
         title.setPosition(sf::Vector2f(120.f, 150.f));
         window.draw(title);
 
         sf::Text start(font, "Click Anywhere to Start", 30);
-        start.setFillColor(sf::Color(200, 200, 200));
+        start.setFillColor(sf::Color(0, 255, 100));
         start.setPosition(sf::Vector2f(150.f, 300.f));
         window.draw(start);
 
@@ -238,8 +252,13 @@ void Game::render()
             msg.setString("PLAYER X WINS!");
         else if (winner == 'O')
             msg.setString("PLAYER O WINS!");
-
+        else if (winner == 'D')
+            msg.setString("GAME DRAW!");
         msg.setPosition(sf::Vector2f(100.f, 250.f));
+        if (winner == 'D')
+        msg.setFillColor(sf::Color(255, 200, 0));   // yellow for draw
+        else
+        msg.setFillColor(sf::Color(0, 255, 100));   // green for win
         window.draw(msg);
 
         sf::Text restart(font, "Press R to Restart", 30);
